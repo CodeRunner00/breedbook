@@ -23,23 +23,16 @@ function App() {
             );
             const json = await response.json();
             const breeds = json?.message;
-            console.log('breeds ', breeds);
             const breedsArr = Array.from(Object.keys(breeds)).map(breed => breed);
-            //   if (breeds[key].length) {
-            //     breeds[key].forEach(name => {
-            //       breedsArr.push(`${key}-${name}`)
-            //     });
-            //   } else {
-            //     breedsArr.push(`${key}`);
-            //   }
-            // });
-            console.log('Dog data ', breedsArr);
             setGlobalStateData({...globalStateData, breeds: breedsArr});
         } catch (e) {
             console.error(e);
         }
     }
     fetchData();
+    return () => {
+      setGlobalStateData(initialState); // Set to initial state when the component unmounts
+    };
 // eslint-disable-next-line react-hooks/exhaustive-deps
 }, []);
 
@@ -70,6 +63,7 @@ function App() {
             />
             {globalStateData?.breeds.map((breed, idx) => (
                 <Route
+                  key={`${breed}${idx}`}
                   path={`/dogs/${breed}`}
                   render={(renderProps) => <BreedView idx={idx} globalStateData={globalStateData} setGlobalStateData={setGlobalStateData} {...renderProps} />} 
                 />))}  
