@@ -1,46 +1,28 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchBreedImages } from './actions';
 
 const BreedView = (props) => {
-    const { idx, globalStateData, setGlobalStateData, history } = props;
-    const breedName = globalStateData?.breeds[idx]; // use the ordinal property of array to always grab the same breed
-    const nextBreedName = idx === globalStateData?.breeds.length - 1 ? globalStateData?.breeds[0] : globalStateData?.breeds[idx + 1]; // if last breed in list, then next is first
-
+    const { idx, history } = props;
+    const breedName = useSelector(state => state?.breeds[idx]); // use the ordinal property of array to always grab the same breed
+    const breedsArr = useSelector(state => state.breeds);
+    const nextBreedName = idx === breedsArr.length - 1 ? breedsArr[0] : breedsArr[idx + 1]; // if last breed in list, then next is first
+    const breedNameImages = useSelector(state => state[breedName]);
+    const nextBreedNameImages = useSelector(state => state[nextBreedName]);
+    const dispatch = useDispatch();
     useEffect(() => {
-        if (globalStateData[breedName] && globalStateData[nextBreedName]) return;
-        const promiseArr = [];
-        if (!globalStateData[breedName] && !globalStateData[nextBreedName]) { // logic for handling two separate calls and receiving response at same time 
-            const promise1 = fetch(`https://dog.ceo/api/breed/${breedName}/images/random/4`);
-            const promise2 = fetch(`https://dog.ceo/api/breed/${nextBreedName}/images/random/4`);
-            promiseArr.push(promise1);
-            promiseArr.push(promise2);
-        } else if (!globalStateData[breedName] && globalStateData[nextBreedName]) {
-            const promise = fetch(`https://dog.ceo/api/breed/${breedName}/images/random/4`);
-            promiseArr.push(promise);
-        } else {
-            const promise = fetch(`https://dog.ceo/api/breed/${nextBreedName}/images/random/4`);
-            promiseArr.push(promise);
-        }
-
-        Promise.all(promiseArr)
-        .then(resp => Promise.all( resp.map(r => r.json()) ))
-        .then(result => {
-            if (!globalStateData[breedName] && !globalStateData[nextBreedName]) { // only set state where necessary
-                setGlobalStateData({...globalStateData, [breedName]: result[0].message, [nextBreedName]: result[1].message});  // dynamically add image caching to global state as key value pair
-            } else if (!globalStateData[breedName] && globalStateData[nextBreedName]) {
-                setGlobalStateData({...globalStateData, [breedName]: result[0].message }); 
-            } else {
-                setGlobalStateData({...globalStateData, [nextBreedName]: result[0].message }); 
-            }
-        });
+        if (!breedNameImages) dispatch(fetchBreedImages(breedName));
+        if (!nextBreedNameImages) dispatch(fetchBreedImages(nextBreedName));
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [history.location.pathname]); // this effect listens for route changes to make calls for particular route
-    const images = globalStateData[breedName];
-    const nextImageSrc = globalStateData[nextBreedName] && globalStateData[nextBreedName][0]; // checks when the nextBreedName is undefined in global state
+    const images = breedNameImages;
+    const nextImageSrc = nextBreedNameImages && nextBreedNameImages[0]; // checks when the nextBreedName is undefined in global state
     return (
     <React.Fragment>
         <ContentWrapper>
+            <h2>{breedName}</h2>
             <div className="images-container">{images && images.length && images.map((src, i) => <img className="main-img" src={src} alt={breedName} key={i} />)}</div>
             <div className="next-breed-container">
                 <div className="link-wrapper-back"><Link to={'/'}>Go Home</Link></div>

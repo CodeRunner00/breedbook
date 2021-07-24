@@ -1,15 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { useSelector } from 'react-redux';
 
 const BreedView = (props) => {
-    const { globalStateData } = props;
-
+    const breedsArr = useSelector(state => state.breeds);
     return (
         <div>
-            {globalStateData?.breeds.length === 0 && <p>Loading...</p>}
+            {breedsArr.length === 0 && <p>Loading...</p>}
             <LinksWrapper>
-                {globalStateData?.breeds.map((breed, index) => (
+                {breedsArr && breedsArr.map((breed, index) => (
                     <div className="link-wrapper" key={index}><Link to={`/dogs/${breed}`} key={`${breed}${index}`}><p>Check out {breed} pics!</p></Link></div>
                 ))}
             </LinksWrapper>
