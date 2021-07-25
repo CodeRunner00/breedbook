@@ -1,6 +1,6 @@
 # Overall app structure
 The app uses redux as a global store for dog breed names and images.  By taking advantage of the mapping property of objects, we are able
-to cache previously made calls for individual breed's images.  For handling the asyncronous nature of the dog API, redux-thunk is used.  React-router is used to hanlde routing and paths.  When routing from one dog landing page to another, the BreedView component is forced to re-render by adding the pathname as a dependency to the useEffect hook.  Finally, the app uses both modules and styled components to create a basic layout.  
+to cache previously made calls for individual breed's images.  For handling the asyncronous nature of the dog API, redux-thunk is used.  React-router is used to handle routing and paths.  When routing from one dog landing page to another, the BreedView component is forced to re-render by adding the pathname as a dependency to the useEffect hook.  Finally, the app uses both modules and styled components to create a basic layout.  
 
 
 # Getting Started with Create React App
@@ -12,6 +12,8 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 In the project directory, you can run:
 
 ### `npm start`
+
+Developed on Node v14
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
